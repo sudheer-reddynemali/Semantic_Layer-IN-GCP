@@ -1,0 +1,96 @@
+# Run: toolbox --tools-file tools.yaml   (needs GCP_PROJECT, BQ_DATASET, BQ_TABLE env vars)
+sources:
+  bq:
+    kind: bigquery
+    project: ${GCP_PROJECT}
+
+tools:
+  get_kpi_table_info:
+    kind: bigquery-get-table-info
+    source: bq
+    description: Get schema and metadata of the KPI table.
+
+  list_kpi_dimensions:
+    kind: bigquery-sql
+    source: bq
+    description: List distinct values of a dimension column (SOURCE, MARKET, METRIC, METRIC_TYPE, SEGMENT, CHANNEL, PRODUCT_TYPE, REPORTING_MONTH).
+    statement: |
+      SELECT DISTINCT CAST(val AS STRING) AS value FROM (
+        SELECT CASE @dimension
+          WHEN 'SOURCE' THEN SOURCE WHEN 'MARKET' THEN MARKET WHEN 'METRIC' THEN METRIC
+          WHEN 'METRIC_TYPE' THEN METRIC_TYPE WHEN 'SEGMENT' THEN SEGMENT
+          WHEN 'CHANNEL' THEN CHANNEL WHEN 'PRODUCT_TYPE' THEN PRODUCT_TYPE
+          WHEN 'REPORTING_MONTH' THEN CAST(REPORTING_MONTH AS STRING) END AS val
+        FROM `${GCP_PROJECT}.${BQ_DATASET}.${BQ_TABLE}`
+      ) WHERE val IS NOT NULL ORDER BY value LIMIT 200
+    parameters:
+      - name: dimension
+        type: string
+        description: Column name to list distinct values for.
+
+  kpi_snapshot:
+    kind: bigquery-sql
+    source: bq
+    description: KPI actual vs plan and vs prior year for one reporting month (YYYYMM), optionally filtered by market, source, metric type. Pass empty string to skip a filter.
+    statement: |
+      SELECT SOURCE, MARKET, METRIC, METRIC_TYPE, SEGMENT, UNIT_TYPE,
+             MTD_ACTUAL, MTD_PLAN, VS_PLAN, PY_MTD_ACTUAL, VS_PY, MOM,
+             YTD_ACTUAL, YTD_PLAN, FY_FORECAST, FY_PLAN, SQ_BREACH_CODE
+      FROM `${GCP_PROJECT}.${BQ_DATASET}.${BQ_TABLE}`
+      WHERE REPORTING_MONTH = @month
+        AND (@market = '' OR MARKET = @market)
+        AND (@source = '' OR SOURCE = @source)
+        AND (@metric_type = '' OR METRIC_TYPE = @metric_type)
+      ORDER BY MARKET, METRIC LIMIT 200
+    parameters:
+      - name: month
+        type: integer
+        description: Reporting month as YYYYMM, e.g. 202508.
+      - name: market
+        type: string
+        description: Market code or empty string.
+      - name: source
+        type: string
+        description: Source (e.g. CCO_CX) or empty string.
+      - name: metric_type
+        type: string
+        description: L1, L2, L3 or empty string.
+
+  kpi_trend:
+    kind: bigquery-sql
+    source: bq
+    description: Monthly trend of MTD actual vs plan for a metric, optionally for one market (empty string = all markets, averaged).
+    statement: |
+      SELECT REPORTING_MONTH, MARKET, AVG(MTD_ACTUAL) AS mtd_actual, AVG(MTD_PLAN) AS mtd_plan
+      FROM `${GCP_PROJECT}.${BQ_DATASET}.${BQ_TABLE}`
+      WHERE METRIC = @metric AND (@market = '' OR MARKET = @market)
+      GROUP BY REPORTING_MONTH, MARKET ORDER BY REPORTING_MONTH, MARKET LIMIT 500
+    parameters:
+      - name: metric
+        type: string
+        description: Exact metric name.
+      - name: market
+        type: string
+        description: Market code or empty string.
+
+  kpi_breaches:
+    kind: bigquery-sql
+    source: bq
+    description: Rows with a RED or AMBER risk appetite breach code for a month.
+    statement: |
+      SELECT MARKET, SOURCE, METRIC, SEGMENT, SQ_BREACH_CODE, SQ_APPETITE, SQ_TOLERANCE, MTD_ACTUAL, VS_PLAN
+      FROM `${GCP_PROJECT}.${BQ_DATASET}.${BQ_TABLE}`
+      WHERE REPORTING_MONTH = @month AND SQ_BREACH_CODE IN ('RED', 'AMBER')
+      ORDER BY SQ_BREACH_CODE, MARKET LIMIT 200
+    parameters:
+      - name: month
+        type: integer
+        description: Reporting month as YYYYMM.
+
+toolsets:
+  kpi:
+    - get_kpi_table_info
+    - list_kpi_dimensions
+    - kpi_snapshot
+    - kpi_trend
+    - kpi_breaches

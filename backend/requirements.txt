@@ -1,0 +1,5 @@
+fastapi
+uvicorn[standard]
+google-adk
+toolbox-core
+python-dotenv
