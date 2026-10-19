@@ -1,0 +1,47 @@
+{
+  "ontology_version": "2.0.0",
+  "graph": "enterprise_kpi",
+  "physical_table": "agentic_kg_usecase",
+  "platform": "BIGQUERY",
+  "project": "",
+  "use_case": "agentic_kg",
+  "fact": "Queried from BigQuery at runtime. Not stored on the graph.",
+  "nodes": [
+    "BQ_Table",
+    "BQ_column",
+    "BQ_KPIMeasure",
+    "LookMLKPIMeasure",
+    "Metric",
+    "Source",
+    "Market",
+    "Segment",
+    "Channel",
+    "Product",
+    "MetricGroup",
+    "MetricLevel",
+    "Unit",
+    "Corridor"
+  ],
+  "retired_nodes": [
+    "ReportingPeriod",
+    "KPIObservation",
+    "RiskProfile",
+    "KPIMeasure"
+  ],
+  "relationships": [
+    "HAS_COLUMN",
+    "ON_TABLE",
+    "USES_COLUMN",
+    "ALIGNS_WITH",
+    "READS_COLUMN",
+    "DEFINED_ON",
+    "FILTERS_COLUMN",
+    "DESCRIBES_COLUMN"
+  ],
+  "optional_vocabulary_relationships_not_in_sample": [
+    "DEFINED_BY_SOURCE",
+    "HAS_LEVEL",
+    "USES_UNIT",
+    "GROUPED_UNDER"
+  ]
+}

@@ -1,0 +1,616 @@
+{
+  "mapping_id": "MAP:agentic_kg_usecase:2.0.0",
+  "version": "2.0.0",
+  "physical_table": "agentic_kg_usecase",
+  "platform": "BIGQUERY",
+  "project": "",
+  "use_case": "agentic_kg",
+  "source": "customer-ontology/enterprise_kpi_ontology.csv",
+  "fact_storage": "Cell values and monthly facts stay in BigQuery. The graph stores schema and measure definitions only.",
+  "retired_labels": [
+    "ReportingPeriod",
+    "KPIObservation",
+    "RiskProfile",
+    "KPIMeasure"
+  ],
+  "nodes": [
+    {
+      "label": "BQ_Table",
+      "identity": "table_id",
+      "role": "Physical table. Parent of every column through HAS_COLUMN."
+    },
+    {
+      "label": "BQ_column",
+      "identity": "column_id",
+      "role": "One node per physical column. YEAR and REPORTING_MONTH are ordinary columns."
+    },
+    {
+      "label": "BQ_KPIMeasure",
+      "identity": "measure_id",
+      "role": "Query definition with name, value_column, aggregation, and filters. Not a column."
+    },
+    {
+      "label": "LookMLKPIMeasure",
+      "identity": "measure_id",
+      "role": "LookML measure with type, sql, label, description, value_format_name, and filters."
+    },
+    {
+      "label": "Metric",
+      "identity": "metric_id",
+      "role": "Vocabulary term. DESCRIBES_COLUMN METRIC."
+    },
+    {
+      "label": "Source",
+      "identity": "source_id",
+      "role": "Vocabulary term. DESCRIBES_COLUMN SOURCE."
+    },
+    {
+      "label": "Market",
+      "identity": "market_id",
+      "role": "Vocabulary term. DESCRIBES_COLUMN MARKET."
+    },
+    {
+      "label": "Segment",
+      "identity": "segment_id",
+      "role": "Vocabulary term. DESCRIBES_COLUMN SEGMENT."
+    },
+    {
+      "label": "Channel",
+      "identity": "channel_id",
+      "role": "Vocabulary term. DESCRIBES_COLUMN CHANNEL."
+    },
+    {
+      "label": "Product",
+      "identity": "product_id",
+      "role": "Vocabulary term. DESCRIBES_COLUMN PRODUCT_TYPE."
+    },
+    {
+      "label": "MetricGroup",
+      "identity": "group_id",
+      "role": "Vocabulary term. DESCRIBES_COLUMN GROUP_ALL."
+    },
+    {
+      "label": "MetricLevel",
+      "identity": "level_id",
+      "role": "Vocabulary term. DESCRIBES_COLUMN METRIC_TYPE."
+    },
+    {
+      "label": "Unit",
+      "identity": "unit_id",
+      "role": "Vocabulary term. DESCRIBES_COLUMN UNIT_TYPE."
+    },
+    {
+      "label": "Corridor",
+      "identity": "corridor_id",
+      "role": "No sample node until a corridor name exists. The CORRIDOR column is still loaded."
+    }
+  ],
+  "relationships": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "BQ_Table",
+      "to": "BQ_column",
+      "rule": "One edge per physical column."
+    },
+    {
+      "type": "ON_TABLE",
+      "from": "BQ_KPIMeasure",
+      "to": "BQ_Table",
+      "rule": "The table the measure is queried from."
+    },
+    {
+      "type": "USES_COLUMN",
+      "from": "BQ_KPIMeasure",
+      "to": "BQ_column",
+      "rule": "Only the value column and the filter columns. Not the full catalog."
+    },
+    {
+      "type": "ALIGNS_WITH",
+      "from": "LookMLKPIMeasure",
+      "to": "BQ_KPIMeasure",
+      "rule": "Optional. Same business amount."
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "LookMLKPIMeasure",
+      "to": "BQ_column",
+      "rule": "Column parsed from ${TABLE}.<column>."
+    },
+    {
+      "type": "DEFINED_ON",
+      "from": "LookMLKPIMeasure",
+      "to": "BQ_Table",
+      "rule": "${TABLE} in the LookML sql."
+    },
+    {
+      "type": "FILTERS_COLUMN",
+      "from": "LookMLKPIMeasure",
+      "to": "BQ_column",
+      "rule": "Column a filter key resolves to. The value stays on the measure."
+    },
+    {
+      "type": "DESCRIBES_COLUMN",
+      "from": "vocabulary term",
+      "to": "BQ_column",
+      "rule": "Word match only. Not required to build the SQL."
+    }
+  ],
+  "sample_measures": [
+    {
+      "bigquery_id": "BQMEASURE:revenue_ytd_actual",
+      "lookml_id": "LOOKML:revenue_ytd_actual",
+      "value_column": "YTD_ACTUAL",
+      "aggregation": "sum",
+      "filters": {
+        "SOURCE": "CCO_REVENUE_L1_L2",
+        "METRIC": "Revenue"
+      },
+      "uses_columns": [
+        "YTD_ACTUAL",
+        "SOURCE",
+        "METRIC"
+      ]
+    },
+    {
+      "bigquery_id": "BQMEASURE:revenue_ytd_plan",
+      "lookml_id": "LOOKML:revenue_ytd_plan",
+      "value_column": "YTD_PLAN",
+      "aggregation": "sum",
+      "filters": {
+        "SOURCE": "CCO_REVENUE_L1_L2",
+        "METRIC": "Revenue"
+      },
+      "uses_columns": [
+        "YTD_PLAN",
+        "SOURCE",
+        "METRIC"
+      ]
+    },
+    {
+      "bigquery_id": "BQMEASURE:revenue_fy_plan",
+      "lookml_id": "LOOKML:revenue_fy_plan",
+      "value_column": "FY_PLAN",
+      "aggregation": "sum",
+      "filters": {
+        "SOURCE": "CCO_REVENUE_L1_L2",
+        "METRIC": "Revenue"
+      },
+      "uses_columns": [
+        "FY_PLAN",
+        "SOURCE",
+        "METRIC"
+      ]
+    }
+  ],
+  "columns": [
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.SOURCE",
+      "name": "SOURCE",
+      "label": "Source",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "source",
+      "description": "Source of the KPI, such as CLCM, Digital, Wealth, CX or Revenue."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.MARKET",
+      "name": "MARKET",
+      "label": "Market",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "SGH|UAE|INM|AOC|EXP|MYH|TWN|USA|MEX",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "market",
+      "description": "Name of the market. In-scope markets include SGH, UAE, INM, AOC, EXP, MYH, TWN, USA and MEX"
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.METRIC",
+      "name": "METRIC",
+      "label": "Metric",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "metric",
+      "description": "The actual metric name used to derive the final KPI."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.METRIC_TYPE",
+      "name": "METRIC_TYPE",
+      "label": "Metric Type",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "L1|L2|L3",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "metric_type",
+      "description": "Tier of the metric: L1 headline metrics, L2 core metrics or L3 business metrics."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.SEGMENT",
+      "name": "SEGMENT",
+      "label": "Segment",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "segment",
+      "description": "Customer segment, such as Premier or Personal Banking."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.GROUP_ALL",
+      "name": "GROUP_ALL",
+      "label": "Group",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "group",
+      "description": "Used for the CX area to identify whether the KPI relates to tNPS, complaints or another group."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.MEET_TARGET",
+      "name": "MEET_TARGET",
+      "label": "Meet Target",
+      "type": "INTEGER",
+      "mode": "NULLABLE",
+      "format": "integer",
+      "enum": "",
+      "column_role": [
+        "kpi_measure",
+        "filter"
+      ],
+      "semantic_use": "meet_target",
+      "description": "Used for the CX area to identify whether the market has met the target for a specific KPI."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.CHANNEL",
+      "name": "CHANNEL",
+      "label": "Channel",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "channel",
+      "description": "Customer onboarding channel, such as Digital, Mobile or CC."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.UNIT_TYPE",
+      "name": "UNIT_TYPE",
+      "label": "Unit Type",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "format": "symbol",
+      "enum": "$|#|%",
+      "column_role": [
+        "dimension",
+        "filter"
+      ],
+      "semantic_use": "unit_type",
+      "description": "Unit of the metric, such as $, # or %."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.VS_YE_TARGET",
+      "name": "VS_YE_TARGET",
+      "label": "Vs Year-End Target",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "vs_ye_target",
+      "description": "Comparison value against the year-end target value."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.SQ_APPETITE",
+      "name": "SQ_APPETITE",
+      "label": "Risk Appetite",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "appetite",
+      "description": "Defined risk appetite value, target or limit set for the metric."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.SQ_TOLERANCE",
+      "name": "SQ_TOLERANCE",
+      "label": "Risk Tolerance",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "tolerance",
+      "description": "Tolerance threshold around the appetite - the acceptable variance beyond appetite before a breach is formally recorded."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.SQ_BREACH_CODE",
+      "name": "SQ_BREACH_CODE",
+      "label": "Breach Code",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "kpi_measure",
+        "filter"
+      ],
+      "semantic_use": "breach_code",
+      "description": "Code identifying the breach status or type where the measured value exceeds appetite or tolerance."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.PRODUCT_TYPE",
+      "name": "PRODUCT_TYPE",
+      "label": "Product Type",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "product_type",
+      "description": "Product type, particularly for Digital Sales metrics such as Wealth or Retail."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.CORRIDOR",
+      "name": "CORRIDOR",
+      "label": "Corridor",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "corridor",
+      "description": "Corridor name, specifically for Funds Flow."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.YEAR",
+      "name": "YEAR",
+      "label": "Year",
+      "type": "INTEGER",
+      "mode": "NULLABLE",
+      "format": "YYYY",
+      "enum": "",
+      "column_role": [
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "reporting_year",
+      "description": "Reporting year."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.REPORTING_MONTH",
+      "name": "REPORTING_MONTH",
+      "label": "Reporting Month",
+      "type": "INTEGER",
+      "mode": "NULLABLE",
+      "format": "MM",
+      "enum": "",
+      "column_role": [
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "reporting_month",
+      "description": "Reporting month."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.MTD_ACTUAL",
+      "name": "MTD_ACTUAL",
+      "label": "MTD Actual",
+      "type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "mtd_actual",
+      "description": "Monthly actual value for the metric."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.MTD_PLAN",
+      "name": "MTD_PLAN",
+      "label": "MTD Plan",
+      "type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "mtd_plan",
+      "description": "Monthly plan for the metric."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.YTD_ACTUAL",
+      "name": "YTD_ACTUAL",
+      "label": "YTD Actual",
+      "type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "ytd_actual",
+      "description": "YTD actuals value for the metric."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.YTD_PLAN",
+      "name": "YTD_PLAN",
+      "label": "YTD Plan",
+      "type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "ytd_plan",
+      "description": "YTD plan value for the metric."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.PY_MTD_ACTUAL",
+      "name": "PY_MTD_ACTUAL",
+      "label": "Prior-year MTD Actual",
+      "type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "py_mtd_actual",
+      "description": "Previous year corresponding monthly actuals value for the metric."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.PY_YTD_ACTUAL",
+      "name": "PY_YTD_ACTUAL",
+      "label": "Prior-year YTD Actual",
+      "type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "py_ytd_actual",
+      "description": "Previous year corresponding YTD actuals value for the metric."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.FY_FORECAST",
+      "name": "FY_FORECAST",
+      "label": "Full-year Forecast",
+      "type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "fy_forecast",
+      "description": "Full year forecast value."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.FY_PLAN",
+      "name": "FY_PLAN",
+      "label": "Full-year Plan",
+      "type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "fy_plan",
+      "description": "Full year plan value."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.MOM",
+      "name": "MOM",
+      "label": "Month on Month",
+      "type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "mom",
+      "description": "Month-over-month change value."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.PM_ACTUAL",
+      "name": "PM_ACTUAL",
+      "label": "Previous-month Actual",
+      "type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "pm_actual",
+      "description": "Previous month actuals value."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.VS_PLAN",
+      "name": "VS_PLAN",
+      "label": "Vs Plan",
+      "type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "vs_plan",
+      "description": "Comparison value against the plan."
+    },
+    {
+      "column_id": "BQ_COL:agentic_kg_usecase.VS_PY",
+      "name": "VS_PY",
+      "label": "Vs Prior Year",
+      "type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "vs_py",
+      "description": "Comparison value against the previous year."
+    }
+  ]
+}

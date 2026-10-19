@@ -1,0 +1,380 @@
+{
+  "source_platform": "BIGQUERY",
+  "physical_table": "agentic_kg_usecase",
+  "project": "",
+  "use_case": "agentic_kg",
+  "notes": "Physical columns of agentic_kg_usecase. Each field is one BQ_column node. Measure definitions are separate BQ_KPIMeasure nodes and are not columns. Cell values are not in the graph. YEAR and REPORTING_MONTH are ordinary columns.",
+  "fields": [
+    {
+      "name": "SOURCE",
+      "label": "Source",
+      "bq_type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "source"
+    },
+    {
+      "name": "MARKET",
+      "label": "Market",
+      "bq_type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "SGH|UAE|INM|AOC|EXP|MYH|TWN|USA|MEX",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "market"
+    },
+    {
+      "name": "METRIC",
+      "label": "Metric",
+      "bq_type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "metric"
+    },
+    {
+      "name": "METRIC_TYPE",
+      "label": "Metric Type",
+      "bq_type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "L1|L2|L3",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "metric_type"
+    },
+    {
+      "name": "SEGMENT",
+      "label": "Segment",
+      "bq_type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "segment"
+    },
+    {
+      "name": "GROUP_ALL",
+      "label": "Group",
+      "bq_type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "group"
+    },
+    {
+      "name": "MEET_TARGET",
+      "label": "Meet Target",
+      "bq_type": "INTEGER",
+      "mode": "NULLABLE",
+      "format": "integer",
+      "enum": "",
+      "column_role": [
+        "kpi_measure",
+        "filter"
+      ],
+      "semantic_use": "meet_target"
+    },
+    {
+      "name": "CHANNEL",
+      "label": "Channel",
+      "bq_type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "channel"
+    },
+    {
+      "name": "UNIT_TYPE",
+      "label": "Unit Type",
+      "bq_type": "STRING",
+      "mode": "REQUIRED",
+      "format": "symbol",
+      "enum": "$|#|%",
+      "column_role": [
+        "dimension",
+        "filter"
+      ],
+      "semantic_use": "unit_type"
+    },
+    {
+      "name": "VS_YE_TARGET",
+      "label": "Vs Year-End Target",
+      "bq_type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "vs_ye_target"
+    },
+    {
+      "name": "SQ_APPETITE",
+      "label": "Risk Appetite",
+      "bq_type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "appetite"
+    },
+    {
+      "name": "SQ_TOLERANCE",
+      "label": "Risk Tolerance",
+      "bq_type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "tolerance"
+    },
+    {
+      "name": "SQ_BREACH_CODE",
+      "label": "Breach Code",
+      "bq_type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "kpi_measure",
+        "filter"
+      ],
+      "semantic_use": "breach_code"
+    },
+    {
+      "name": "PRODUCT_TYPE",
+      "label": "Product Type",
+      "bq_type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "product_type"
+    },
+    {
+      "name": "CORRIDOR",
+      "label": "Corridor",
+      "bq_type": "STRING",
+      "mode": "REQUIRED",
+      "format": "string",
+      "enum": "",
+      "column_role": [
+        "dimension",
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "corridor"
+    },
+    {
+      "name": "YEAR",
+      "label": "Year",
+      "bq_type": "INTEGER",
+      "mode": "NULLABLE",
+      "format": "YYYY",
+      "enum": "",
+      "column_role": [
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "reporting_year"
+    },
+    {
+      "name": "REPORTING_MONTH",
+      "label": "Reporting Month",
+      "bq_type": "INTEGER",
+      "mode": "NULLABLE",
+      "format": "MM",
+      "enum": "",
+      "column_role": [
+        "filter",
+        "join_key"
+      ],
+      "semantic_use": "reporting_month"
+    },
+    {
+      "name": "MTD_ACTUAL",
+      "label": "MTD Actual",
+      "bq_type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "mtd_actual"
+    },
+    {
+      "name": "MTD_PLAN",
+      "label": "MTD Plan",
+      "bq_type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "mtd_plan"
+    },
+    {
+      "name": "YTD_ACTUAL",
+      "label": "YTD Actual",
+      "bq_type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "ytd_actual"
+    },
+    {
+      "name": "YTD_PLAN",
+      "label": "YTD Plan",
+      "bq_type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "ytd_plan"
+    },
+    {
+      "name": "PY_MTD_ACTUAL",
+      "label": "Prior-year MTD Actual",
+      "bq_type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "py_mtd_actual"
+    },
+    {
+      "name": "PY_YTD_ACTUAL",
+      "label": "Prior-year YTD Actual",
+      "bq_type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "py_ytd_actual"
+    },
+    {
+      "name": "FY_FORECAST",
+      "label": "Full-year Forecast",
+      "bq_type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "fy_forecast"
+    },
+    {
+      "name": "FY_PLAN",
+      "label": "Full-year Plan",
+      "bq_type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "fy_plan"
+    },
+    {
+      "name": "MOM",
+      "label": "Month on Month",
+      "bq_type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "mom"
+    },
+    {
+      "name": "PM_ACTUAL",
+      "label": "Previous-month Actual",
+      "bq_type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "pm_actual"
+    },
+    {
+      "name": "VS_PLAN",
+      "label": "Vs Plan",
+      "bq_type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "vs_plan"
+    },
+    {
+      "name": "VS_PY",
+      "label": "Vs Prior Year",
+      "bq_type": "FLOAT",
+      "mode": "REQUIRED",
+      "format": "decimal",
+      "enum": "",
+      "column_role": [
+        "kpi_measure"
+      ],
+      "semantic_use": "vs_py"
+    }
+  ]
+}
