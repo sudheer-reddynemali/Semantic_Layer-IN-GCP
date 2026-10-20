@@ -1,4 +1,0 @@
-google-adk
-mcp
-fastapi
-uvicorn

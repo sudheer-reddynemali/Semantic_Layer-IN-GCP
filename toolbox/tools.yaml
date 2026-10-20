@@ -34,8 +34,8 @@ tools:
     description: KPI actual vs plan and vs prior year for one reporting month (YYYYMM), optionally filtered by market, source, metric type. Pass empty string to skip a filter.
     statement: |
       SELECT SOURCE, MARKET, METRIC, METRIC_TYPE, SEGMENT, UNIT_TYPE,
-             MTD_ACTUAL, MTD_PLAN, VS_PLAN, PY_MTD_ACTUAL, VS_PY, MOM,
-             YTD_ACTUAL, YTD_PLAN, FY_FORECAST, FY_PLAN, SQ_BREACH_CODE
+             MTD_ACT, MTD_PLAN, VS_PLAN, PY_MTD_ACT, VS_PY, MOM,
+             YTD_ACTL, YTD_PLAN, FY_FORECAST, FY_PLAN, SQ_BREACH_CODE
       FROM `${GCP_PROJECT}.${BQ_DATASET}.${BQ_TABLE}`
       WHERE REPORTING_MONTH = @month
         AND (@market = '' OR MARKET = @market)
@@ -61,7 +61,7 @@ tools:
     source: bq
     description: Monthly trend of MTD actual vs plan for a metric, optionally for one market (empty string = all markets, averaged).
     statement: |
-      SELECT REPORTING_MONTH, MARKET, AVG(MTD_ACTUAL) AS mtd_actual, AVG(MTD_PLAN) AS mtd_plan
+      SELECT REPORTING_MONTH, MARKET, AVG(MTD_ACT) AS mtd_actual, AVG(MTD_PLAN) AS mtd_plan
       FROM `${GCP_PROJECT}.${BQ_DATASET}.${BQ_TABLE}`
       WHERE METRIC = @metric AND (@market = '' OR MARKET = @market)
       GROUP BY REPORTING_MONTH, MARKET ORDER BY REPORTING_MONTH, MARKET LIMIT 500
@@ -78,7 +78,7 @@ tools:
     source: bq
     description: Rows with a RED or AMBER risk appetite breach code for a month.
     statement: |
-      SELECT MARKET, SOURCE, METRIC, SEGMENT, SQ_BREACH_CODE, SQ_APPETITE, SQ_TOLERANCE, MTD_ACTUAL, VS_PLAN
+      SELECT MARKET, SOURCE, METRIC, SEGMENT, SQ_BREACH_CODE, SQ_APPETITE, SQ_TOLERANCE, MTD_ACT, VS_PLAN
       FROM `${GCP_PROJECT}.${BQ_DATASET}.${BQ_TABLE}`
       WHERE REPORTING_MONTH = @month AND SQ_BREACH_CODE IN ('RED', 'AMBER')
       ORDER BY SQ_BREACH_CODE, MARKET LIMIT 200

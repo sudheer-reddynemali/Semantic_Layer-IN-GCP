@@ -36,17 +36,39 @@ class Query(BaseModel):
     question: str = Field(min_length=1, max_length=2000)
 
 
-async def run_agent(kind: str, question: str) -> str:
-    session_id = uuid.uuid4().hex
-    await sessions.create_session(app_name=APP_NAME, user_id="web", session_id=session_id)
+class AskRequest(Query):
+    user_id: str = "web"
+    session_id: str | None = None
+
+
+class AskResponse(BaseModel):
+    answer: str
+    session_id: str
+
+
+async def run_agent(
+    kind: str, question: str, user_id: str = "web", session_id: str | None = None
+) -> tuple[str, str]:
+    session = None
+    if session_id:
+        session = await sessions.get_session(
+            app_name=APP_NAME, user_id=user_id, session_id=session_id
+        )
+    if session is None:
+        session = await sessions.create_session(
+            app_name=APP_NAME,
+            user_id=user_id,
+            session_id=session_id or uuid.uuid4().hex,
+        )
+
     message = types.Content(role="user", parts=[types.Part(text=question)])
     text = ""
     async for event in runners[kind].run_async(
-        user_id="web", session_id=session_id, new_message=message
+        user_id=user_id, session_id=session.id, new_message=message
     ):
         if event.is_final_response() and event.content and event.content.parts:
             text = "".join(p.text or "" for p in event.content.parts)
-    return text
+    return text, session.id
 
 
 @app.get("/health")
@@ -54,10 +76,22 @@ def health():
     return {"status": "ok"}
 
 
+@app.post("/ask", response_model=AskResponse)
+async def ask(q: AskRequest):
+    try:
+        answer, session_id = await run_agent(
+            "summary", q.question, user_id=q.user_id, session_id=q.session_id
+        )
+    except Exception as exc:
+        raise HTTPException(502, f"Agent error: {exc}") from exc
+    return AskResponse(answer=answer, session_id=session_id)
+
+
 @app.post("/api/summary")
 async def summary(q: Query):
     try:
-        return {"summary": await run_agent("summary", q.question)}
+        text, _session_id = await run_agent("summary", q.question)
+        return {"summary": text}
     except Exception as exc:
         raise HTTPException(502, f"Agent error: {exc}") from exc
 
@@ -65,7 +99,7 @@ async def summary(q: Query):
 @app.post("/api/visualize")
 async def visualize(q: Query):
     try:
-        text = await run_agent("visualize", q.question)
+        text, _session_id = await run_agent("visualize", q.question)
     except Exception as exc:
         raise HTTPException(502, f"Agent error: {exc}") from exc
     match = re.search(r"```json\s*(.*?)```", text, re.S)
