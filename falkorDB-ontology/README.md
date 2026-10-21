@@ -63,6 +63,12 @@ To switch input data, update `INPUT_DATA_FILE` in `.env`; to switch the ontology
 
 The loader upserts the stable ontology IDs. It does not load KPI fact rows. The current model excludes `ReportingPeriod`, `KPIObservation`, `RiskProfile`, and legacy `KPIMeasure` nodes.
 
+## Direct BigQuery ingestion
+
+The packaged `bigquery-falkordb-ingest` command streams BigQuery rows directly into the current ontology without creating a CSV. It upserts the table/column schema, distinct vocabulary, and KPI query definitions; numeric row values remain in BigQuery. The command defaults to all rows and supports bounded runs with `--limit 1000`. See [the direct-ingestion README](./bigquery_falkordb_ingestion/README.md) for installation, retries, failure replay, and configuration.
+
+Install the project entry points with `.\.venv\Scripts\python.exe -m pip install -e .`, then run `bigquery-falkordb-ingest` or `bigquery-falkordb-ingest --limit 2000`.
+
 
 ## Historical fact-ingestion workflow (do not use for the current ontology)
 
@@ -77,6 +83,7 @@ The older `scripts/ingest_records.py` writes `KPIObservation` fact nodes. It is 
 | Load ontology catalog from `.env` | `ontology-ingest` |
 | Validate ontology catalog from `.env` | `ontology-validate` |
 | Export configured BigQuery batch | `python scripts/export_bigquery_csv.py` |
+| Direct BigQuery ingestion (all rows) | `bigquery-falkordb-ingest` |
 | Show loader options | `ontology-ingest --help` |
 
 `docker compose down` removes the container and keeps the named volume. `docker compose down -v` deletes that volume.

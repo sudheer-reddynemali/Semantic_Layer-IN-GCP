@@ -1,0 +1,138 @@
+{
+  "bigquery": {
+    "project": "gcp-fs-looker-agentic",
+    "dataset": "kg_demo_usecase",
+    "table": "usecase_abc"
+  },
+  "batch_size": 100,
+  "retry_limit": 3,
+  "retry_base_seconds": 0.5,
+  "required_fields": [
+    "metric"
+  ],
+  "canonical_field_mappings": {
+    "TARGET_MEET": "meet_target",
+    "MTD_ACT": "mtd_actual",
+    "YTD_ACTL": "ytd_actual",
+    "PY_MTD_ACT": "py_mtd_actual",
+    "PY_YTD_ACTL": "py_ytd_actual",
+    "PM_ACTL": "pm_actual"
+  },
+  "vocabulary_mappings": [
+    {
+      "bigquery_column": "SOURCE",
+      "canonical_field": "source",
+      "label": "Source",
+      "id_property": "source_id",
+      "id_prefix": "SOURCE",
+      "falkordb_column": "SOURCE"
+    },
+    {
+      "bigquery_column": "MARKET",
+      "canonical_field": "market",
+      "label": "Market",
+      "id_property": "market_id",
+      "id_prefix": "MARKET",
+      "falkordb_column": "MARKET"
+    },
+    {
+      "bigquery_column": "METRIC",
+      "canonical_field": "metric",
+      "label": "Metric",
+      "id_property": "metric_id",
+      "id_prefix": "METRIC",
+      "falkordb_column": "METRIC"
+    },
+    {
+      "bigquery_column": "METRIC_TYPE",
+      "canonical_field": "metric_type",
+      "label": "MetricLevel",
+      "id_property": "level_id",
+      "id_prefix": "LEVEL",
+      "falkordb_column": "METRIC_TYPE"
+    },
+    {
+      "bigquery_column": "SEGMENT",
+      "canonical_field": "segment",
+      "label": "Segment",
+      "id_property": "segment_id",
+      "id_prefix": "SEGMENT",
+      "falkordb_column": "SEGMENT"
+    },
+    {
+      "bigquery_column": "GROUP_ALL",
+      "canonical_field": "group_all",
+      "label": "MetricGroup",
+      "id_property": "group_id",
+      "id_prefix": "GROUP",
+      "falkordb_column": "GROUP_ALL"
+    },
+    {
+      "bigquery_column": "CHANNEL",
+      "canonical_field": "channel",
+      "label": "Channel",
+      "id_property": "channel_id",
+      "id_prefix": "CHANNEL",
+      "falkordb_column": "CHANNEL"
+    },
+    {
+      "bigquery_column": "UNIT_TYPE",
+      "canonical_field": "unit_type",
+      "label": "Unit",
+      "id_property": "unit_id",
+      "id_prefix": "UNIT",
+      "falkordb_column": "UNIT_TYPE"
+    },
+    {
+      "bigquery_column": "PRODUCT_TYPE",
+      "canonical_field": "product_type",
+      "label": "Product",
+      "id_property": "product_id",
+      "id_prefix": "PRODUCT",
+      "falkordb_column": "PRODUCT_TYPE"
+    },
+    {
+      "bigquery_column": "CORRIDOR",
+      "canonical_field": "corridor",
+      "label": "Corridor",
+      "id_property": "corridor_id",
+      "id_prefix": "CORRIDOR",
+      "falkordb_column": "CORRIDOR"
+    }
+  ],
+  "unit_values": {
+    "#": {
+      "id": "UNIT:COUNT",
+      "code": "COUNT",
+      "name": "Count",
+      "source_symbol": "#"
+    },
+    "%": {
+      "id": "UNIT:PERCENT",
+      "code": "PERCENT",
+      "name": "Percent",
+      "source_symbol": "%"
+    },
+    "$": {
+      "id": "UNIT:CURRENCY",
+      "code": "CURRENCY",
+      "name": "Currency",
+      "source_symbol": "$",
+      "currency_inferred": false
+    }
+  },
+  "kpi_definitions": [
+    {
+      "key": "ytd_actual",
+      "bigquery_column": "YTD_ACTL",
+      "canonical_field": "ytd_actual",
+      "falkordb_column": "YTD_ACTUAL",
+      "name_template": "{metric} YTD Actual",
+      "measure_id_template": "BQMEASURE:{metric}",
+      "aggregation": "none",
+      "filters": {
+        "METRIC": "metric"
+      }
+    }
+  ]
+}

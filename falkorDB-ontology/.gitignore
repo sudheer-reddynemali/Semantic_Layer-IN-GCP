@@ -5,3 +5,4 @@ __pycache__/
 .pytest_cache/
 /data/bigquery_pilot.csv
 *.egg-info/
+bigquery_falkordb_ingestion/failed_records/

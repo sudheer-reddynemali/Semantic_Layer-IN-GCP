@@ -15,9 +15,10 @@ dependencies = [
 [project.scripts]
 ontology-ingest = "load_sample_data:main"
 ontology-validate = "validate_graph:main"
+bigquery-falkordb-ingest = "bigquery_falkordb_ingestion.cli:main"
 
 [tool.setuptools]
-package-dir = {"" = "scripts"}
+package-dir = {"" = "scripts", "bigquery_falkordb_ingestion" = "bigquery_falkordb_ingestion"}
 py-modules = [
     "export_bigquery_csv",
     "export_sample_csv",
@@ -33,4 +34,14 @@ py-modules = [
     "validate_graph",
     "validate_records",
     "vocabulary_values",
+]
+packages = ["bigquery_falkordb_ingestion"]
+
+[tool.setuptools.package-data]
+bigquery_falkordb_ingestion = [
+    "config.json",
+    ".env.example",
+    "README.md",
+    "requirements.txt",
+    "ontology/*.csv",
 ]
