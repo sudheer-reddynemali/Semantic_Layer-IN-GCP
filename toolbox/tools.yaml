@@ -4,6 +4,14 @@ sources:
     kind: bigquery
     project: ${GCP_PROJECT}
 
+  kg:
+    kind: falkordb
+    host: 127.0.0.1
+    port: "16379"
+    graph: agentic_kg_pilot
+    username: default
+    password: ${FALKORDB_PASSWORD}
+
 tools:
   get_kpi_table_info:
     kind: bigquery-get-table-info
@@ -87,6 +95,17 @@ tools:
         type: integer
         description: Reporting month as YYYYMM.
 
+  get_kg_schema:
+    kind: falkordb-schema
+    source: kg
+    description: Get the knowledge graph schema (node labels, relationships, properties). call this before querying the graph.
+
+
+  query_kg:
+    kind: falkordb-execute-cypher
+    source: kg
+    description: Run a read-only Cypher query on the agentic_kg_pilot knowledge graph to find metrics, markets, sources and which BigQuery column (BQ_column) holds each value, before writing SQL.
+  
 toolsets:
   kpi:
     - get_kpi_table_info
@@ -94,3 +113,5 @@ toolsets:
     - kpi_snapshot
     - kpi_trend
     - kpi_breaches
+    - get_kg_schema
+    - query_kg
